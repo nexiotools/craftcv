@@ -5,7 +5,7 @@ const CHECKOUT_URL_PRO      = "https://nexiotools.lemonsqueezy.com/checkout/buy/
 const CHECKOUT_URL_LIFETIME = "https://nexiotools.lemonsqueezy.com/checkout/buy/f64fcf1b-191f-43cd-a11a-8e31a437a527";
 const FREE_LIMIT = 2;
 const STORAGE_KEY = "craftcv_uses";
-const API_TIMEOUT_MS = 30000;
+const API_TIMEOUT_MS = 40000;
 
 const SAMPLE_JD = `Senior Product Manager – FinTech SaaS
 
@@ -36,6 +36,107 @@ BSc Computer Science, University of Amsterdam, 2019
 
 SKILLS: SQL, Jira, Figma, Mixpanel, Agile`;
 
+// ─── Extract text from PDF using Claude vision ────────────────────────────────
+async function extractFromPDF(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        const base64 = e.target.result.split(",")[1];
+        const response = await fetch("/api/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: "claude-opus-4-7",
+            max_tokens: 2000,
+            system: "You extract text from PDF documents. Return only the raw extracted text, preserving structure and formatting. No commentary.",
+            messages: [{
+              role: "user",
+              content: [
+                { type: "document", source: { type: "base64", media_type: "application/pdf", data: base64 } },
+                { type: "text", text: "Extract all text from this document. Return only the raw text." }
+              ]
+            }]
+          })
+        });
+        const data = await response.json();
+        const text = data.content?.find(b => b.type === "text")?.text || "";
+        if (text.trim()) resolve(text.trim());
+        else reject(new Error("Could not extract text from PDF."));
+      } catch (err) { reject(err); }
+    };
+    reader.onerror = () => reject(new Error("Failed to read file."));
+    reader.readAsDataURL(file);
+  });
+}
+
+// ─── Extract text from plain text / docx (read as text) ──────────────────────
+async function extractFromText(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target.result;
+      if (text && text.trim().length > 20) resolve(text.trim());
+      else reject(new Error("File appears to be empty or unreadable. Please paste your text manually."));
+    };
+    reader.onerror = () => reject(new Error("Failed to read file."));
+    reader.readAsText(file);
+  });
+}
+
+async function extractTextFromFile(file) {
+  const name = file.name.toLowerCase();
+  if (name.endsWith(".pdf")) return extractFromPDF(file);
+  if (name.endsWith(".txt")) return extractFromText(file);
+  // For .doc/.docx -- try as text, likely won't work but gives a useful error
+  if (name.endsWith(".docx") || name.endsWith(".doc")) {
+    throw new Error("Word documents (.docx) are not supported yet. Please copy and paste your text, or save as PDF and upload that.");
+  }
+  return extractFromText(file);
+}
+
+// ─── UPLOAD BUTTON COMPONENT ─────────────────────────────────────────────────
+function UploadBtn({ label, onExtract, uploading, setUploading, setError }) {
+  const ref = useRef(null);
+
+  const handleFile = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = "";
+    setUploading(true);
+    setError("");
+    try {
+      const text = await extractTextFromFile(file);
+      onExtract(text);
+    } catch (err) {
+      setError(err.message || "Could not read file. Please paste your text manually.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <>
+      <input ref={ref} type="file" accept=".pdf,.txt" onChange={handleFile} style={{ display: "none" }} />
+      <button
+        onClick={() => ref.current?.click()}
+        disabled={uploading}
+        style={{
+          display: "inline-flex", alignItems: "center", gap: 5,
+          background: "#f0ede8", border: "1px solid #e8e4de",
+          color: "#666", fontSize: 11, fontWeight: 500,
+          padding: "4px 10px", borderRadius: 12, cursor: uploading ? "not-allowed" : "pointer",
+          fontFamily: "'DM Sans', sans-serif", opacity: uploading ? 0.6 : 1,
+          transition: "all 0.2s"
+        }}
+      >
+        📎 {uploading ? "Reading..." : label}
+      </button>
+    </>
+  );
+}
+
+// ─── PAYWALL MODAL ────────────────────────────────────────────────────────────
 function PaywallModal({ onClose }) {
   return (
     <div style={{
@@ -76,7 +177,7 @@ function PaywallModal({ onClose }) {
             "Unlimited CV + JD analyses",
             "Tailored cover letters every time",
             "Keyword gap detection",
-            "Works in any language",
+            "Upload PDF or paste text",
             "One-time payment — no recurring charges",
           ].map((f, i) => (
             <div key={i} style={{
@@ -147,11 +248,14 @@ function PaywallModal({ onClose }) {
   );
 }
 
+// ─── MAIN APP ─────────────────────────────────────────────────────────────────
 export default function App() {
   const [jd, setJd] = useState("");
   const [cv, setCv] = useState("");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [uploadingJd, setUploadingJd] = useState(false);
+  const [uploadingCv, setUploadingCv] = useState(false);
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("score");
   const [copied, setCopied] = useState("");
@@ -171,10 +275,7 @@ export default function App() {
   const isLocked = usesCount >= FREE_LIMIT;
   const remainingFree = Math.max(0, FREE_LIMIT - usesCount);
 
-  const openPaywall = () => {
-    setResult(null);
-    setShowPaywall(true);
-  };
+  const openPaywall = () => { setResult(null); setShowPaywall(true); };
 
   const incrementUses = () => {
     const next = usesCount + 1;
@@ -201,11 +302,11 @@ export default function App() {
         signal: controller.signal,
         body: JSON.stringify({
           model: "claude-opus-4-7",
-          max_tokens: 1200,
-          system: `You are an elite career coach and hiring expert with 20 years of experience reviewing CVs and cover letters. You give sharp, honest, actionable feedback. Detect the language of the inputs and respond in that same language. Respond ONLY with valid JSON — no markdown, no backticks, no preamble.`,
+          max_tokens: 1500,
+          system: `You are an elite career coach and hiring expert with 20 years of experience reviewing CVs and cover letters. You give sharp, honest, actionable feedback. Detect the language of the inputs and respond in that same language throughout. Respond ONLY with valid JSON — no markdown, no backticks, no preamble.`,
           messages: [{
             role: "user",
-            content: `Analyze this CV against the job description. Respond ONLY with this exact JSON:
+            content: `Analyze this CV against the job description. Respond ONLY with this exact JSON object and nothing else:
 
 {
   "match_score": <integer 0-100>,
@@ -236,11 +337,15 @@ ${cv}`
       const raw = data.content?.find(b => b.type === "text")?.text || "";
       const clean = raw.replace(/```json|```/g, "").trim();
 
+      // Find JSON in response even if there's surrounding text
+      const jsonMatch = clean.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) throw new Error("Could not parse response. Please try again.");
+
       let parsed;
-      try { parsed = JSON.parse(clean); }
+      try { parsed = JSON.parse(jsonMatch[0]); }
       catch { throw new Error("Could not parse response. Please try again."); }
 
-      if (!parsed.match_score || !parsed.match_verdict) {
+      if (parsed.match_score === undefined || !parsed.match_verdict) {
         throw new Error("Incomplete response. Please try again.");
       }
 
@@ -294,14 +399,14 @@ ${cv}`
         h1 { font-family: 'Syne', sans-serif; font-size: clamp(30px, 5vw, 46px); font-weight: 800; line-height: 1.05; color: #0f0f0f; margin-bottom: 12px; letter-spacing: -0.03em; }
         h1 em { font-style: normal; color: #888; }
         .subtitle { color: #888; font-size: 15px; font-weight: 300; line-height: 1.6; max-width: 460px; }
-        .steps-row { display: flex; gap: 8px; margin-bottom: 12px; }
-        .step-dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; font-family: 'Syne', sans-serif; transition: all 0.2s; }
+        .step-dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; font-family: 'Syne', sans-serif; transition: all 0.2s; flex-shrink: 0; }
         .step-dot.active { background: #0f0f0f; color: #fff; }
         .step-dot.done { background: #22c55e; color: #fff; }
         .step-dot.inactive { background: #e8e4de; color: #aaa; }
-        .step-line { flex: 1; height: 1px; background: #e8e4de; margin: auto 0; align-self: center; }
+        .step-line { flex: 1; height: 1px; background: #e8e4de; }
         .card { background: #fff; border: 1px solid #e8e4de; border-radius: 16px; padding: 28px; animation: fadeUp 0.5s ease both; box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
-        .card-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #aaa; margin-bottom: 12px; display: flex; justify-content: space-between; }
+        .card-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #aaa; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+        .card-label-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
         textarea { width: 100%; background: #f9f7f5; border: 1px solid #e8e4de; border-radius: 10px; color: #0f0f0f; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 300; line-height: 1.7; padding: 16px; resize: vertical; outline: none; transition: border-color 0.2s; min-height: 160px; max-height: 360px; }
         textarea:focus { border-color: #0f0f0f; background: #fff; }
         textarea::placeholder { color: #bbb; }
@@ -327,7 +432,7 @@ ${cv}`
         .score-block { display: flex; align-items: center; gap: 24px; padding: 24px; background: #f9f7f5; border-radius: 12px; margin-bottom: 24px; flex-wrap: wrap; }
         .score-ring { width: 80px; height: 80px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 3px solid; flex-shrink: 0; }
         .score-number { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; line-height: 1; }
-        .score-pct { font-size: 10px; color: #aaa; font-weight: 400; }
+        .score-pct { font-size: 10px; color: #aaa; }
         .score-verdict { font-size: 15px; font-weight: 500; color: #0f0f0f; line-height: 1.5; }
         .score-label { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
         .tabs { display: flex; gap: 2px; background: #f0ede8; border-radius: 10px; padding: 3px; margin-bottom: 20px; }
@@ -351,6 +456,7 @@ ${cv}`
         .try-again-btn { display: flex; align-items: center; gap: 6px; background: transparent; border: 1px solid #e8e4de; color: #aaa; border-radius: 8px; padding: 10px 16px; font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.2s; margin-top: 20px; }
         .try-again-btn:hover { color: #444; border-color: #aaa; }
         .privacy-note { margin-top: 12px; padding: 10px 14px; background: #f9f7f5; border: 1px solid #e8e4de; border-radius: 8px; font-size: 11px; color: #bbb; line-height: 1.6; }
+        .upload-hint { font-size: 11px; color: #bbb; margin-top: 6px; }
         .footer { text-align: center; padding-top: 40px; color: #ccc; font-size: 12px; font-weight: 300; }
         .footer a { color: #aaa; text-decoration: none; }
         .footer a:hover { color: #0f0f0f; }
@@ -372,21 +478,18 @@ ${cv}`
                 {remainingFree === 1 ? "⚠ " : ""}{remainingFree} free {remainingFree === 1 ? "analysis" : "analyses"} left
               </span>
             ) : (
-              <button className="access-btn" onClick={openPaywall}>
-                🎯 Get Access from €15
-              </button>
+              <button className="access-btn" onClick={openPaywall}>🎯 Get Access from €15</button>
             )}
           </div>
           <h1>Land more interviews.<br /><em>Faster.</em></h1>
-          <p className="subtitle">Paste a job description and your CV. Get a match score, actionable improvements, and a tailored cover letter — in seconds.</p>
+          <p className="subtitle">Paste or upload your job description and CV. Get a match score, actionable improvements, and a tailored cover letter — in seconds.</p>
         </div>
 
         {!result && !loading && (
           <>
+            {/* Step indicator */}
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20, animation: "fadeUp 0.4s ease both" }}>
-              <div className={`step-dot ${step >= 1 ? (step > 1 ? "done" : "active") : "inactive"}`}>
-                {step > 1 ? "✓" : "1"}
-              </div>
+              <div className={`step-dot ${step >= 1 ? (step > 1 ? "done" : "active") : "inactive"}`}>{step > 1 ? "✓" : "1"}</div>
               <div className="step-line" />
               <div className={`step-dot ${step >= 2 ? "active" : "inactive"}`}>2</div>
               <div style={{ fontSize: 12, color: "#aaa", marginLeft: 8, fontWeight: 400 }}>
@@ -398,15 +501,31 @@ ${cv}`
               <div className="card" key="step1">
                 <div className="card-label">
                   <span>Step 1 — Job description</span>
-                  <span style={{ color: "#bbb", fontWeight: 400 }}>{jd.length > 0 ? `${jd.length} chars` : ""}</span>
+                  <div className="card-label-actions">
+                    {jd.length > 0 && <span style={{ color: "#bbb", fontWeight: 400 }}>{jd.length} chars</span>}
+                    <UploadBtn
+                      label="Upload PDF"
+                      onExtract={setJd}
+                      uploading={uploadingJd}
+                      setUploading={setUploadingJd}
+                      setError={setError}
+                    />
+                  </div>
                 </div>
+                {uploadingJd && (
+                  <div style={{ marginBottom: 10, padding: "10px 14px", background: "#f9f7f5", border: "1px solid #e8e4de", borderRadius: 8, display: "flex", alignItems: "center", gap: 8 }}>
+                    <div style={{ width: 14, height: 14, border: "2px solid #e8e4de", borderTopColor: "#0f0f0f", borderRadius: "50%", animation: "spin 0.7s linear infinite", flexShrink: 0 }} />
+                    <span style={{ color: "#888", fontSize: 13 }}>Reading job description...</span>
+                  </div>
+                )}
                 <textarea
                   value={jd}
                   onChange={e => setJd(e.target.value)}
-                  placeholder="Paste the full job description here — title, requirements, responsibilities..."
+                  placeholder="Paste the job description here, or upload a PDF using the button above..."
                 />
+                <p className="upload-hint">Supported: paste text, or upload a .pdf or .txt file</p>
                 <div className="btn-row">
-                  <button className="btn-next" onClick={() => { if (jd.trim().length > 20) { setStep(2); setError(""); } else setError("Please paste a job description first."); }}>
+                  <button className="btn-next" onClick={() => { if (jd.trim().length > 20) { setStep(2); setError(""); } else setError("Please add a job description first."); }}>
                     Next: Add your CV →
                   </button>
                   <button className="btn-secondary" onClick={() => { setJd(SAMPLE_JD); setError(""); }}>
@@ -421,14 +540,30 @@ ${cv}`
               <div className="card" key="step2">
                 <div className="card-label">
                   <span>Step 2 — Your CV</span>
-                  <span style={{ color: "#bbb", fontWeight: 400 }}>{cv.length > 0 ? `${cv.length} chars` : ""}</span>
+                  <div className="card-label-actions">
+                    {cv.length > 0 && <span style={{ color: "#bbb", fontWeight: 400 }}>{cv.length} chars</span>}
+                    <UploadBtn
+                      label="Upload CV (PDF)"
+                      onExtract={setCv}
+                      uploading={uploadingCv}
+                      setUploading={setUploadingCv}
+                      setError={setError}
+                    />
+                  </div>
                 </div>
+                {uploadingCv && (
+                  <div style={{ marginBottom: 10, padding: "10px 14px", background: "#f9f7f5", border: "1px solid #e8e4de", borderRadius: 8, display: "flex", alignItems: "center", gap: 8 }}>
+                    <div style={{ width: 14, height: 14, border: "2px solid #e8e4de", borderTopColor: "#0f0f0f", borderRadius: "50%", animation: "spin 0.7s linear infinite", flexShrink: 0 }} />
+                    <span style={{ color: "#888", fontSize: 13 }}>Reading your CV...</span>
+                  </div>
+                )}
                 <textarea
                   value={cv}
                   onChange={e => setCv(e.target.value)}
-                  placeholder="Paste your CV here — experience, education, skills..."
+                  placeholder="Paste your CV here, or upload a PDF using the button above..."
                   autoFocus
                 />
+                <p className="upload-hint">Supported: paste text, or upload a .pdf or .txt file</p>
                 <div className="btn-row">
                   <button
                     className={`btn-primary${isLocked ? " locked" : ""}`}
@@ -449,7 +584,7 @@ ${cv}`
                   </div>
                 )}
                 <div className="privacy-note">
-                  🔒 Your CV and job description are sent securely and are not stored or used for training. Do not paste confidential content.
+                  🔒 Your CV and job description are sent securely and are not stored or used for training.
                 </div>
               </div>
             )}
@@ -475,18 +610,14 @@ ${cv}`
                   <span className="score-pct">/ 100</span>
                 </div>
                 <div>
-                  <div className="score-label" style={{ color: scoreColor(result.match_score) }}>
-                    {scoreLabel(result.match_score)}
-                  </div>
+                  <div className="score-label" style={{ color: scoreColor(result.match_score) }}>{scoreLabel(result.match_score)}</div>
                   <p className="score-verdict">{result.match_verdict}</p>
                 </div>
               </div>
 
               <div className="tabs">
                 {tabs.map(t => (
-                  <button key={t.key} className={`tab${activeTab === t.key ? " active" : ""}`} onClick={() => setActiveTab(t.key)}>
-                    {t.label}
-                  </button>
+                  <button key={t.key} className={`tab${activeTab === t.key ? " active" : ""}`} onClick={() => setActiveTab(t.key)}>{t.label}</button>
                 ))}
               </div>
 
@@ -532,9 +663,7 @@ ${cv}`
                 <p className="upgrade-banner-text">
                   <strong>That was your last free analysis.</strong> Get full access from €15 — one-time payment.
                 </p>
-                <button className="upgrade-banner-btn" onClick={openPaywall}>
-                  Get access →
-                </button>
+                <button className="upgrade-banner-btn" onClick={openPaywall}>Get access →</button>
               </div>
             )}
 
