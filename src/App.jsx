@@ -5,6 +5,7 @@ const CHECKOUT_URL_PRO      = "https://nexiotools.lemonsqueezy.com/checkout/buy/
 const CHECKOUT_URL_LIFETIME = "https://nexiotools.lemonsqueezy.com/checkout/buy/f64fcf1b-191f-43cd-a11a-8e31a437a527";
 const FREE_LIMIT = 2;
 const STORAGE_KEY = "craftcv_uses";
+const WHITELIST_KEY = "craftcv_whitelisted";
 const API_TIMEOUT_MS = 40000;
 
 const SAMPLE_JD = `Senior Product Manager – FinTech SaaS
@@ -137,7 +138,34 @@ function UploadBtn({ label, onExtract, uploading, setUploading, setError }) {
 }
 
 // ─── PAYWALL MODAL ────────────────────────────────────────────────────────────
-function PaywallModal({ onClose }) {
+function PaywallModal({ onClose, onWhitelisted }) {
+  const [code, setCode] = useState("");
+  const [codeStatus, setCodeStatus] = useState("idle");
+  const [showCodeEntry, setShowCodeEntry] = useState(false);
+
+  const handleValidate = async () => {
+    if (!code.trim()) return;
+    setCodeStatus("checking");
+    try {
+      const res = await fetch("/api/validate-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: code.trim() }),
+      });
+      const data = await res.json();
+      if (data.valid) {
+        setCodeStatus("success");
+        try { localStorage.setItem(WHITELIST_KEY, "1"); } catch {}
+        setTimeout(() => { onWhitelisted(); onClose(); }, 800);
+      } else {
+        setCodeStatus("error");
+        setTimeout(() => setCodeStatus("idle"), 2000);
+      }
+    } catch {
+      setCodeStatus("error");
+      setTimeout(() => setCodeStatus("idle"), 2000);
+    }
+  };
   return (
     <div style={{
       position: "fixed", inset: 0, zIndex: 100,
@@ -243,6 +271,47 @@ function PaywallModal({ onClose }) {
         <p style={{ textAlign: "center", color: "#bbb", fontSize: 11 }}>
           Secure checkout · Lemon Squeezy · VAT included
         </p>
+
+        {/* Access code entry */}
+        {!showCodeEntry ? (
+          <button onClick={() => setShowCodeEntry(true)} style={{
+            background: "transparent", border: "none", color: "#bbb",
+            fontSize: 12, cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
+            textDecoration: "underline", display: "block", margin: "8px auto 0", padding: "4px 0"
+          }}>
+            Have an access code?
+          </button>
+        ) : (
+          <div style={{ marginTop: 12 }}>
+            <div style={{ display: "flex", gap: 8 }}>
+              <input
+                type="text" value={code}
+                onChange={e => setCode(e.target.value)}
+                onKeyDown={e => e.key === "Enter" && handleValidate()}
+                placeholder="Enter your access code"
+                style={{
+                  flex: 1, background: "#f9f7f5",
+                  border: `1px solid ${codeStatus === "error" ? "#fca5a5" : codeStatus === "success" ? "#86efac" : "#e8e4de"}`,
+                  borderRadius: 8, padding: "10px 14px", color: "#0f0f0f",
+                  fontFamily: "'DM Sans', sans-serif", fontSize: 13, outline: "none"
+                }}
+              />
+              <button onClick={handleValidate}
+                disabled={codeStatus === "checking" || codeStatus === "success"}
+                style={{
+                  background: codeStatus === "success" ? "#f0fdf4" : "#0f0f0f",
+                  border: "none",
+                  color: codeStatus === "success" ? "#22c55e" : "#fff",
+                  borderRadius: 8, padding: "10px 16px", cursor: "pointer",
+                  fontFamily: "'Syne', sans-serif", fontSize: 13, fontWeight: 700, whiteSpace: "nowrap"
+                }}>
+                {codeStatus === "checking" ? "..." : codeStatus === "success" ? "✓" : "Apply"}
+              </button>
+            </div>
+            {codeStatus === "error" && <p style={{ color: "#ef4444", fontSize: 11, marginTop: 6, textAlign: "center" }}>Invalid code. Please try again.</p>}
+            {codeStatus === "success" && <p style={{ color: "#22c55e", fontSize: 11, marginTop: 6, textAlign: "center" }}>✓ Access granted! Unlocking...</p>}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -261,6 +330,7 @@ export default function App() {
   const [copied, setCopied] = useState("");
   const [usesCount, setUsesCount] = useState(0);
   const [showPaywall, setShowPaywall] = useState(false);
+  const [isWhitelisted, setIsWhitelisted] = useState(false);
   const [step, setStep] = useState(1);
   const abortRef = useRef(null);
 
@@ -268,11 +338,12 @@ export default function App() {
     try {
       const stored = parseInt(localStorage.getItem(STORAGE_KEY) || "0", 10);
       setUsesCount(stored);
+      if (localStorage.getItem(WHITELIST_KEY) === "1") setIsWhitelisted(true);
     } catch { setUsesCount(0); }
     return () => { if (abortRef.current) abortRef.current.abort(); };
   }, []);
 
-  const isLocked = usesCount >= FREE_LIMIT;
+  const isLocked = usesCount >= FREE_LIMIT && !isWhitelisted;
   const remainingFree = Math.max(0, FREE_LIMIT - usesCount);
 
   const openPaywall = () => { setResult(null); setShowPaywall(true); };
@@ -467,13 +538,17 @@ ${cv}`
         @media (max-width: 480px) { .btn-row { flex-direction: column; } .btn-primary, .btn-secondary { width: 100%; } }
       `}</style>
 
-      {showPaywall && <PaywallModal onClose={() => setShowPaywall(false)} />}
+      {showPaywall && <PaywallModal onClose={() => setShowPaywall(false)} onWhitelisted={() => setIsWhitelisted(true)} />}
 
       <div className="container">
         <div className="header">
           <div className="header-row">
             <div className="logo-mark">✦ CraftCV</div>
-            {usesCount < FREE_LIMIT ? (
+            {isWhitelisted ? (
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#f0fdf4", border: "1px solid #86efac", color: "#22c55e", fontSize: 11, padding: "5px 12px", borderRadius: 20, fontFamily: "'DM Sans', sans-serif" }}>
+                ✓ Access granted
+              </span>
+            ) : usesCount < FREE_LIMIT ? (
               <span className={`free-badge${remainingFree === 1 ? " warn" : ""}`}>
                 {remainingFree === 1 ? "⚠ " : ""}{remainingFree} free {remainingFree === 1 ? "analysis" : "analyses"} left
               </span>
