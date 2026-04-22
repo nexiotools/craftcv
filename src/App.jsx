@@ -840,7 +840,7 @@ ${cv}`
         )}
 
         <div className="footer">
-          <p>CraftCV by <a href="https://nexio.tools" target="_blank" rel="noopener noreferrer">Nexio</a> &mdash; Land the role you deserve</p>
+          <p>CraftCV by <a href="https://nexiotools.nl" target="_blank" rel="noopener noreferrer">nexiotools.nl</a> &mdash; Land the role you deserve</p>
         </div>
       </div>
     </div>
