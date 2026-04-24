@@ -433,6 +433,31 @@ export default function App() {
         }
       }
     } catch { setUsesCount(0); }
+
+    // Auto-unlock from Lemon Squeezy redirect
+    const params = new URLSearchParams(window.location.search);
+    const emailParam = params.get("email");
+    if (emailParam) {
+      fetch("/api/validate-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: emailParam.trim() }),
+      })
+        .then(r => r.json())
+        .then(data => {
+          if (data.valid) {
+            try {
+              localStorage.setItem(WHITELIST_KEY, "1");
+              localStorage.setItem(WHITELIST_KEY + "_email", emailParam.trim().toLowerCase());
+              localStorage.setItem(WHITELIST_KEY + "_expires", String(data.expiresAt));
+            } catch {}
+            setIsWhitelisted(true);
+            window.history.replaceState({}, "", window.location.pathname);
+          }
+        })
+        .catch(() => {});
+    }
+
     return () => { if (abortRef.current) abortRef.current.abort(); };
   }, []);
 
