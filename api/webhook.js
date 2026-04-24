@@ -2,10 +2,6 @@ import crypto from "crypto";
 
 // Product variant IDs → access duration in days + plan name
 const VARIANT_ACCESS = {
-  // BrieflyAI live
-  1568729: { days: 90,    plan: "Starter" },
-  1568732: { days: 365,   plan: "Pro" },
-  1568734: { days: 36500, plan: "Lifetime" },
   // CraftCV live
   1568762: { days: 90,    plan: "Starter" },
   1568763: { days: 365,   plan: "Pro" },
