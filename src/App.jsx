@@ -889,6 +889,12 @@ ${cv}`
 
         <div className="footer">
           <p>CraftCV by <a href="https://nexiotools.nl" target="_blank" rel="noopener noreferrer">nexiotools.nl</a> &mdash; Land the role you deserve</p>
+          <p style={{ fontSize: 11, color: "#bbb", marginTop: 6 }}>
+            Your content is processed securely and never stored. &nbsp;
+            <a href="https://nexiotools.nl/privacy.html" target="_blank" rel="noopener noreferrer" style={{ color: "#bbb" }}>Privacy Policy</a>
+            &nbsp;·&nbsp;
+            <a href="https://nexiotools.nl/terms.html" target="_blank" rel="noopener noreferrer" style={{ color: "#bbb" }}>Terms of Service</a>
+          </p>
         </div>
       </div>
     </div>
