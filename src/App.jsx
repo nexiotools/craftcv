@@ -226,7 +226,14 @@ function PaywallModal({ onClose, onWhitelisted }) {
           width: 48, height: 48, borderRadius: 12, background: "#0f0f0f",
           display: "flex", alignItems: "center", justifyContent: "center",
           marginBottom: 20, fontSize: 20
-        }}>🎯</div>
+        }}>
+          <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
+            <rect width="32" height="32" rx="7" fill="#f5f3f0"/>
+            <rect x="6" y="6" width="5" height="20" rx="1.4" fill="#0f0f0f"/>
+            <rect x="21" y="6" width="5" height="20" rx="1.4" fill="#0f0f0f"/>
+            <polygon points="11,6 16,6 26,26 21,26" fill="#ff4f4f"/>
+          </svg>
+        </div>
 
         <h2 style={{
           fontFamily: "'Syne', sans-serif", fontSize: 22, fontWeight: 800,
@@ -671,7 +678,9 @@ ${cv}`
                 {remainingFree === 1 ? "⚠ " : ""}{remainingFree} free {remainingFree === 1 ? "analysis" : "analyses"} left
               </span>
             ) : (
-              <button className="access-btn" onClick={openPaywall}>🎯 Get Access from €15</button>
+              <button className="access-btn" onClick={openPaywall}>
+                Get Access from €15
+              </button>
             )}
           </div>
           <h1>Land more interviews.<br /><em>Faster.</em></h1>
