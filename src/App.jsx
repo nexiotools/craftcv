@@ -422,6 +422,8 @@ export default function App() {
   const [usesCount, setUsesCount] = useState(0);
   const [showPaywall, setShowPaywall] = useState(false);
   const [isWhitelisted, setIsWhitelisted] = useState(false);
+  const [accessPlan, setAccessPlan] = useState(null);
+  const [accessDaysLeft, setAccessDaysLeft] = useState(null);
   const [step, setStep] = useState(1);
   const abortRef = useRef(null);
 
@@ -435,8 +437,16 @@ export default function App() {
           localStorage.removeItem(WHITELIST_KEY);
           localStorage.removeItem(WHITELIST_KEY + "_email");
           localStorage.removeItem(WHITELIST_KEY + "_expires");
+          localStorage.removeItem(WHITELIST_KEY + "_plan");
         } else {
           setIsWhitelisted(true);
+          const plan = localStorage.getItem(WHITELIST_KEY + "_plan");
+          const exp = localStorage.getItem(WHITELIST_KEY + "_expires");
+          if (plan) setAccessPlan(plan);
+          if (exp && plan !== "Lifetime") {
+            const days = Math.ceil((parseInt(exp) - Date.now()) / (1000 * 60 * 60 * 24));
+            setAccessDaysLeft(days);
+          }
         }
       }
     } catch { setUsesCount(0); }
@@ -457,8 +467,11 @@ export default function App() {
               localStorage.setItem(WHITELIST_KEY, "1");
               localStorage.setItem(WHITELIST_KEY + "_email", emailParam.trim().toLowerCase());
               localStorage.setItem(WHITELIST_KEY + "_expires", String(data.expiresAt));
+              if (data.plan) localStorage.setItem(WHITELIST_KEY + "_plan", data.plan);
             } catch {}
             setIsWhitelisted(true);
+            if (data.plan) setAccessPlan(data.plan);
+            if (data.daysLeft) setAccessDaysLeft(data.daysLeft);
             window.history.replaceState({}, "", window.location.pathname);
           }
         })
@@ -671,7 +684,7 @@ ${cv}`
             <div className="logo-mark">✦ CraftCV</div>
             {isWhitelisted ? (
               <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#f0fdf4", border: "1px solid #86efac", color: "#22c55e", fontSize: 11, padding: "5px 12px", borderRadius: 20, fontFamily: "'DM Sans', sans-serif" }}>
-                ✓ Access granted
+                ✓ {accessPlan ? accessPlan : "Access granted"}{accessPlan && accessPlan !== "Lifetime" && accessDaysLeft ? ` · ${accessDaysLeft} days left` : accessPlan === "Lifetime" ? " · Lifetime" : ""}
               </span>
             ) : usesCount < FREE_LIMIT ? (
               <span className={`free-badge${remainingFree === 1 ? " warn" : ""}`}>
