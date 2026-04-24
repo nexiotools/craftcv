@@ -188,8 +188,9 @@ function PaywallModal({ onClose, onWhitelisted }) {
           localStorage.setItem(WHITELIST_KEY, "1");
           localStorage.setItem(WHITELIST_KEY + "_email", email.trim().toLowerCase());
           localStorage.setItem(WHITELIST_KEY + "_expires", String(data.expiresAt));
+          if (data.plan) localStorage.setItem(WHITELIST_KEY + "_plan", data.plan);
         } catch {}
-        setTimeout(() => { onWhitelisted(); onClose(); }, 1000);
+        setTimeout(() => { onWhitelisted(data.plan, data.daysLeft); onClose(); }, 1000);
       } else if (data.expired) {
         setEmailStatus("expired");
         setTimeout(() => setEmailStatus("idle"), 3000);
@@ -676,7 +677,7 @@ ${cv}`
         @media (max-width: 480px) { .btn-row { flex-direction: column; } .btn-primary, .btn-secondary { width: 100%; } }
       `}</style>
 
-      {showPaywall && <PaywallModal onClose={() => setShowPaywall(false)} onWhitelisted={() => setIsWhitelisted(true)} />}
+      {showPaywall && <PaywallModal onClose={() => setShowPaywall(false)} onWhitelisted={(plan, daysLeft) => { setIsWhitelisted(true); if (plan) setAccessPlan(plan); if (daysLeft) setAccessDaysLeft(daysLeft); }} />}
 
       <div className="container">
         <div className="header">
