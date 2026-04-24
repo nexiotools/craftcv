@@ -26,7 +26,6 @@ export default async function handler(req, res) {
     const now = Date.now();
 
     if (record.expiresAt < now) {
-      // Expired -- clean up
       await fetch(`${redisUrl}/del/${encodeURIComponent(key)}`, {
         headers: { Authorization: `Bearer ${redisToken}` },
       });
@@ -34,11 +33,15 @@ export default async function handler(req, res) {
       return res.status(200).json({ valid: false, expired: true });
     }
 
+    const daysLeft = Math.ceil((record.expiresAt - now) / (1000 * 60 * 60 * 24));
+    const plan = record.plan || (record.days >= 36500 ? "Lifetime" : record.days >= 365 ? "Pro" : "Starter");
+
     await new Promise(r => setTimeout(r, 300));
     return res.status(200).json({
       valid: true,
       expiresAt: record.expiresAt,
-      daysLeft: Math.ceil((record.expiresAt - now) / (1000 * 60 * 60 * 24)),
+      daysLeft: record.days >= 36500 ? null : daysLeft,
+      plan,
     });
 
   } catch (e) {
