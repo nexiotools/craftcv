@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 
-const CHECKOUT_URL_STARTER  = "https://nexiotools.lemonsqueezy.com/checkout/buy/2fa49e1f-d8e3-4eee-b7d8-ba994422dcbe";
-const CHECKOUT_URL_PRO      = "https://nexiotools.lemonsqueezy.com/checkout/buy/0620b4a5-4b67-4f7e-9282-9207e8297bb4";
-const CHECKOUT_URL_LIFETIME = "https://nexiotools.lemonsqueezy.com/checkout/buy/f64fcf1b-191f-43cd-a11a-8e31a437a527";
+const CHECKOUT_URL_STARTER  = "https://nexiotools.lemonsqueezy.com/checkout/buy/a807774c-8888-43e3-b9c9-f861070ba1c6";
+const CHECKOUT_URL_PRO      = "https://nexiotools.lemonsqueezy.com/checkout/buy/a807774c-8888-43e3-b9c9-f861070ba1c6?variant=1568763";
+const CHECKOUT_URL_LIFETIME = "https://nexiotools.lemonsqueezy.com/checkout/buy/a807774c-8888-43e3-b9c9-f861070ba1c6?variant=1568764";
 const FREE_LIMIT = 2;
 const STORAGE_KEY = "craftcv_uses";
 const WHITELIST_KEY = "craftcv_whitelisted";
