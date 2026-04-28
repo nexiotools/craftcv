@@ -426,10 +426,139 @@ export default function App() {
   const [accessPlan, setAccessPlan] = useState(null);
   const [accessDaysLeft, setAccessDaysLeft] = useState(null);
   const [step, setStep] = useState(1);
+  const [lang, setLang] = useState("nl");
   const abortRef = useRef(null);
+
+  const T = {
+    en: {
+      h1a: "Land more interviews.",
+      h1b: "Faster.",
+      subtitle: "Paste or upload your job description and CV. Get a match score, actionable improvements, and a tailored cover letter — in seconds.",
+      step1Label: "Job description",
+      step2Label: "Your CV",
+      stepIndicator: (s) => s === 1 ? "Job description" : "Your CV",
+      cardLabelJd: "Step 1 — Job description",
+      cardLabelCv: "Step 2 — Your CV",
+      placeholderJd: "Paste the job description here...",
+      placeholderCv: "Paste your CV here...",
+      analyseBtn: "Analyse CV",
+      unlock: "🔒 Unlock to Analyse",
+      next: "Next →",
+      back: "← Back",
+      cancel: "Cancel",
+      analysing: "Analysing your CV...",
+      tabScore: "Match Score",
+      tabImprove: "Improvements",
+      tabLetter: "Cover Letter",
+      scoreStrengths: "Strengths",
+      scoreGaps: "Gaps",
+      improvements: "CV Improvements",
+      copyLetter: "Copy cover letter",
+      newAnalysis: "← New analysis",
+      freeLeft: (n) => `${n} free ${n === 1 ? "analysis" : "analyses"} left`,
+      freeWarn: (n) => `⚠ ${n} free ${n === 1 ? "analysis" : "analyses"} left`,
+      getAccess: "Get Access from €15",
+      scoreStrong: "Strong match",
+      scorePartial: "Partial match",
+      scoreWeak: "Weak match",
+      errorBoth: "Please fill in both fields.",
+      errorTimeout: "Request timed out. Please try again.",
+      errorFallback: "Something went wrong. Please try again.",
+      errorParse: "Could not parse response. Please try again.",
+      errorIncomplete: "Incomplete response. Please try again.",
+      upgradeBanner: <>That was your last free analysis. <strong>Get full access from €15 — one-time payment.</strong></>,
+      upgradeBtn: "Get access →",
+      privacyNote: "🔒 Your CV and job description are sent securely and never stored.",
+      footerTagline: "Land the role you deserve",
+      uploadHint: "or upload a PDF",
+    },
+    nl: {
+      h1a: "Meer interviews binnenhalen.",
+      h1b: "Sneller.",
+      subtitle: "Plak of upload de vacaturetekst en je cv. Krijg een matchscore, verbeterpunten en een op maat gemaakte motivatiebrief — in seconden.",
+      stepIndicator: (s) => s === 1 ? "Vacaturetekst" : "Jouw cv",
+      cardLabelJd: "Stap 1 — Vacaturetekst",
+      cardLabelCv: "Stap 2 — Jouw cv",
+      placeholderJd: "Plak hier de vacaturetekst...",
+      placeholderCv: "Plak hier je cv...",
+      analyseBtn: "Analyseer cv",
+      unlock: "🔒 Ontgrendelen om te analyseren",
+      next: "Volgende →",
+      back: "← Terug",
+      cancel: "Annuleren",
+      analysing: "Je cv wordt geanalyseerd...",
+      tabScore: "Matchscore",
+      tabImprove: "Verbeteringen",
+      tabLetter: "Motivatiebrief",
+      scoreStrengths: "Sterktes",
+      scoreGaps: "Ontbrekende punten",
+      improvements: "CV-verbeteringen",
+      copyLetter: "Kopieer motivatiebrief",
+      newAnalysis: "← Nieuwe analyse",
+      freeLeft: (n) => `${n} gratis ${n === 1 ? "analyse" : "analyses"} over`,
+      freeWarn: (n) => `⚠ ${n} gratis ${n === 1 ? "analyse" : "analyses"} over`,
+      getAccess: "Toegang vanaf €15",
+      scoreStrong: "Goede match",
+      scorePartial: "Gedeeltelijke match",
+      scoreWeak: "Zwakke match",
+      errorBoth: "Vul beide velden in.",
+      errorTimeout: "Verzoek verlopen. Probeer opnieuw.",
+      errorFallback: "Er ging iets mis. Probeer opnieuw.",
+      errorParse: "Kon reactie niet verwerken. Probeer opnieuw.",
+      errorIncomplete: "Onvolledige reactie. Probeer opnieuw.",
+      upgradeBanner: <>Dat was je laatste gratis analyse. <strong>Volledige toegang vanaf €15 — eenmalige betaling.</strong></>,
+      upgradeBtn: "Toegang →",
+      privacyNote: "🔒 Je cv en vacaturetekst worden veilig verwerkt en nooit opgeslagen.",
+      footerTagline: "Krijg de baan die je verdient",
+      uploadHint: "of upload een pdf",
+    },
+    fr: {
+      h1a: "Décrochez plus d'entretiens.",
+      h1b: "Plus vite.",
+      subtitle: "Collez ou importez la description du poste et votre CV. Obtenez un score de correspondance, des améliorations concrètes et une lettre de motivation — en quelques secondes.",
+      stepIndicator: (s) => s === 1 ? "Description du poste" : "Votre CV",
+      cardLabelJd: "Étape 1 — Description du poste",
+      cardLabelCv: "Étape 2 — Votre CV",
+      placeholderJd: "Collez ici la description du poste...",
+      placeholderCv: "Collez ici votre CV...",
+      analyseBtn: "Analyser le CV",
+      unlock: "🔒 Déverrouiller pour analyser",
+      next: "Suivant →",
+      back: "← Retour",
+      cancel: "Annuler",
+      analysing: "Analyse de votre CV...",
+      tabScore: "Score de correspondance",
+      tabImprove: "Améliorations",
+      tabLetter: "Lettre de motivation",
+      scoreStrengths: "Points forts",
+      scoreGaps: "Points manquants",
+      improvements: "Améliorations du CV",
+      copyLetter: "Copier la lettre de motivation",
+      newAnalysis: "← Nouvelle analyse",
+      freeLeft: (n) => `${n} analyse${n > 1 ? "s" : ""} gratuite${n > 1 ? "s" : ""} restante${n > 1 ? "s" : ""}`,
+      freeWarn: (n) => `⚠ ${n} analyse${n > 1 ? "s" : ""} gratuite${n > 1 ? "s" : ""} restante${n > 1 ? "s" : ""}`,
+      getAccess: "Accès à partir de €15",
+      scoreStrong: "Bonne correspondance",
+      scorePartial: "Correspondance partielle",
+      scoreWeak: "Faible correspondance",
+      errorBoth: "Veuillez remplir les deux champs.",
+      errorTimeout: "La requête a expiré. Veuillez réessayer.",
+      errorFallback: "Une erreur est survenue. Veuillez réessayer.",
+      errorParse: "Impossible de traiter la réponse. Veuillez réessayer.",
+      errorIncomplete: "Réponse incomplète. Veuillez réessayer.",
+      upgradeBanner: <>C'était votre dernière analyse gratuite. <strong>Accès complet à partir de €15 — paiement unique.</strong></>,
+      upgradeBtn: "Obtenir l'accès →",
+      privacyNote: "🔒 Votre CV et la description du poste sont transmis de manière sécurisée et ne sont jamais stockés.",
+      footerTagline: "Décrochez le poste que vous méritez",
+      uploadHint: "ou importer un PDF",
+    },
+  };
+  const t = T[lang];
 
   useEffect(() => {
     try {
+      const savedLang = localStorage.getItem("craftcv_lang");
+      if (savedLang && ["nl","en","fr"].includes(savedLang)) setLang(savedLang);
       const stored = parseInt(localStorage.getItem(STORAGE_KEY) || "0", 10);
       setUsesCount(stored);
       if (localStorage.getItem(WHITELIST_KEY) === "1") {
@@ -494,7 +623,7 @@ export default function App() {
   };
 
   const handleAnalyze = async () => {
-    if (!jd.trim() || !cv.trim()) { setError("Please fill in both fields."); return; }
+    if (!jd.trim() || !cv.trim()) { setError(t.errorBoth); return; }
     if (isLocked) { openPaywall(); return; }
 
     setError("");
@@ -549,14 +678,14 @@ ${cv}`
 
       // Find JSON in response even if there's surrounding text
       const jsonMatch = clean.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) throw new Error("Could not parse response. Please try again.");
+      if (!jsonMatch) throw new Error(t.errorParse);
 
       let parsed;
       try { parsed = JSON.parse(jsonMatch[0]); }
-      catch { throw new Error("Could not parse response. Please try again."); }
+      catch { throw new Error(t.errorParse); }
 
       if (parsed.match_score === undefined || !parsed.match_verdict) {
-        throw new Error("Incomplete response. Please try again.");
+        throw new Error(t.errorIncomplete);
       }
 
       setResult(parsed);
@@ -566,9 +695,9 @@ ${cv}`
     } catch (e) {
       clearTimeout(timeout);
       if (e.name === "AbortError") {
-        setError("Request timed out. Please try again.");
+        setError(t.errorTimeout);
       } else {
-        setError(e.message || "Something went wrong. Please try again.");
+        setError(e.message || t.errorFallback);
       }
     } finally {
       setLoading(false);
@@ -584,12 +713,12 @@ ${cv}`
   const reset = () => { setJd(""); setCv(""); setResult(null); setError(""); setStep(1); };
 
   const scoreColor = (s) => { if (s >= 75) return "#22c55e"; if (s >= 50) return "#f59e0b"; return "#ef4444"; };
-  const scoreLabel = (s) => { if (s >= 75) return "Strong match"; if (s >= 50) return "Partial match"; return "Weak match"; };
+  const scoreLabel = (s) => { if (s >= 75) return t.scoreStrong; if (s >= 50) return t.scorePartial; return t.scoreWeak; };
 
   const tabs = [
-    { key: "score", label: "Match Score" },
-    { key: "improve", label: "Improvements" },
-    { key: "letter", label: "Cover Letter" },
+    { key: "score", label: t.tabScore },
+    { key: "improve", label: t.tabImprove },
+    { key: "letter", label: t.tabLetter },
   ];
 
   return (
@@ -682,23 +811,37 @@ ${cv}`
       <div className="container">
         <div className="header">
           <div className="header-row">
-            <div className="logo-mark">✦ CraftCV</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div className="logo-mark">✦ CraftCV</div>
+              <div style={{ display: "flex", background: "#f0ede8", border: "1px solid #e8e4de", borderRadius: 20, overflow: "hidden" }}>
+                {["nl","en","fr"].map(l => (
+                  <button key={l} onClick={() => { setLang(l); try { localStorage.setItem("craftcv_lang", l); } catch {} }} style={{
+                    background: lang === l ? "#0f0f0f" : "transparent",
+                    border: "none", color: lang === l ? "#fff" : "#aaa",
+                    fontSize: 11, fontWeight: lang === l ? 700 : 400,
+                    padding: "4px 10px", cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
+                    borderRight: l !== "fr" ? "1px solid #e8e4de" : "none",
+                    transition: "all 0.15s"
+                  }}>{l.toUpperCase()}</button>
+                ))}
+              </div>
+            </div>
             {isWhitelisted ? (
               <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#f0fdf4", border: "1px solid #86efac", color: "#22c55e", fontSize: 11, padding: "5px 12px", borderRadius: 20, fontFamily: "'DM Sans', sans-serif" }}>
                 ✓ {accessPlan ? accessPlan : "Access granted"}{accessPlan && accessPlan !== "Lifetime" && accessDaysLeft ? ` · ${accessDaysLeft} days left` : accessPlan === "Lifetime" ? " · Lifetime" : ""}
               </span>
             ) : usesCount < FREE_LIMIT ? (
               <span className={`free-badge${remainingFree === 1 ? " warn" : ""}`}>
-                {remainingFree === 1 ? "⚠ " : ""}{remainingFree} free {remainingFree === 1 ? "analysis" : "analyses"} left
+                {remainingFree === 1 ? t.freeWarn(remainingFree) : t.freeLeft(remainingFree)}
               </span>
             ) : (
               <button className="access-btn" onClick={openPaywall}>
-                Get Access from €15
+                {t.getAccess}
               </button>
             )}
           </div>
-          <h1>Land more interviews.<br /><em>Faster.</em></h1>
-          <p className="subtitle">Paste or upload your job description and CV. Get a match score, actionable improvements, and a tailored cover letter — in seconds.</p>
+          <h1>{t.h1a}<br /><em>{t.h1b}</em></h1>
+          <p className="subtitle">{t.subtitle}</p>
         </div>
 
         {!result && !loading && (
@@ -709,18 +852,18 @@ ${cv}`
               <div className="step-line" />
               <div className={`step-dot ${step >= 2 ? "active" : "inactive"}`}>2</div>
               <div style={{ fontSize: 12, color: "#aaa", marginLeft: 8, fontWeight: 400 }}>
-                {step === 1 ? "Job description" : "Your CV"}
+                {t.stepIndicator(step)}
               </div>
             </div>
 
             {step === 1 && (
               <div className="card" key="step1">
                 <div className="card-label">
-                  <span>Step 1 — Job description</span>
+                  <span>{t.cardLabelJd}</span>
                   <div className="card-label-actions">
                     {jd.length > 0 && <span style={{ color: "#bbb", fontWeight: 400 }}>{jd.length} chars</span>}
                     <UploadBtn
-                      label="Upload PDF"
+                      label={t.uploadHint}
                       onExtract={setJd}
                       uploading={uploadingJd}
                       setUploading={setUploadingJd}
@@ -731,21 +874,21 @@ ${cv}`
                 {uploadingJd && (
                   <div style={{ marginBottom: 10, padding: "10px 14px", background: "#f9f7f5", border: "1px solid #e8e4de", borderRadius: 8, display: "flex", alignItems: "center", gap: 8 }}>
                     <div style={{ width: 14, height: 14, border: "2px solid #e8e4de", borderTopColor: "#0f0f0f", borderRadius: "50%", animation: "spin 0.7s linear infinite", flexShrink: 0 }} />
-                    <span style={{ color: "#888", fontSize: 13 }}>Reading job description...</span>
+                    <span style={{ color: "#888", fontSize: 13 }}>{lang === "fr" ? "Lecture de la description du poste..." : lang === "nl" ? "Vacaturetekst wordt gelezen..." : "Reading job description..."}</span>
                   </div>
                 )}
                 <textarea
                   value={jd}
                   onChange={e => setJd(e.target.value)}
-                  placeholder="Paste the job description here, or upload a PDF using the button above..."
+                  placeholder={t.placeholderJd}
                 />
-                <p className="upload-hint">Supported: paste text, or upload a .pdf or .txt file</p>
+                <p className="upload-hint">{lang === "fr" ? "Pris en charge : texte collé ou fichier .pdf / .txt" : lang === "nl" ? "Ondersteund: geplakte tekst of .pdf/.txt bestand" : "Supported: paste text, or upload a .pdf or .txt file"}</p>
                 <div className="btn-row">
-                  <button className="btn-next" onClick={() => { if (jd.trim().length > 20) { setStep(2); setError(""); } else setError("Please add a job description first."); }}>
-                    Next: Add your CV →
+                  <button className="btn-next" onClick={() => { if (jd.trim().length > 20) { setStep(2); setError(""); } else setError(lang === "fr" ? "Veuillez d'abord ajouter une description de poste." : lang === "nl" ? "Voeg eerst een vacaturetekst toe." : "Please add a job description first."); }}>
+                    {t.next}
                   </button>
                   <button className="btn-secondary" onClick={() => { setJd(SAMPLE_JD); setError(""); }}>
-                    Use sample JD
+                    {lang === "fr" ? "Exemple" : lang === "nl" ? "Voorbeeld" : "Use sample JD"}
                   </button>
                 </div>
                 {error && <div className="error"><span>{error}</span></div>}
@@ -755,11 +898,11 @@ ${cv}`
             {step === 2 && (
               <div className="card" key="step2">
                 <div className="card-label">
-                  <span>Step 2 — Your CV</span>
+                  <span>{t.cardLabelCv}</span>
                   <div className="card-label-actions">
                     {cv.length > 0 && <span style={{ color: "#bbb", fontWeight: 400 }}>{cv.length} chars</span>}
                     <UploadBtn
-                      label="Upload CV (PDF)"
+                      label={t.uploadHint}
                       onExtract={setCv}
                       uploading={uploadingCv}
                       setUploading={setUploadingCv}
@@ -770,37 +913,37 @@ ${cv}`
                 {uploadingCv && (
                   <div style={{ marginBottom: 10, padding: "10px 14px", background: "#f9f7f5", border: "1px solid #e8e4de", borderRadius: 8, display: "flex", alignItems: "center", gap: 8 }}>
                     <div style={{ width: 14, height: 14, border: "2px solid #e8e4de", borderTopColor: "#0f0f0f", borderRadius: "50%", animation: "spin 0.7s linear infinite", flexShrink: 0 }} />
-                    <span style={{ color: "#888", fontSize: 13 }}>Reading your CV...</span>
+                    <span style={{ color: "#888", fontSize: 13 }}>{lang === "fr" ? "Lecture de votre CV..." : lang === "nl" ? "CV wordt gelezen..." : "Reading your CV..."}</span>
                   </div>
                 )}
                 <textarea
                   value={cv}
                   onChange={e => setCv(e.target.value)}
-                  placeholder="Paste your CV here, or upload a PDF using the button above..."
+                  placeholder={t.placeholderCv}
                   autoFocus
                 />
-                <p className="upload-hint">Supported: paste text, or upload a .pdf or .txt file</p>
+                <p className="upload-hint">{lang === "fr" ? "Pris en charge : texte collé ou fichier .pdf / .txt" : lang === "nl" ? "Ondersteund: geplakte tekst of .pdf/.txt bestand" : "Supported: paste text, or upload a .pdf or .txt file"}</p>
                 <div className="btn-row">
                   <button
                     className={`btn-primary${isLocked ? " locked" : ""}`}
                     onClick={isLocked ? openPaywall : handleAnalyze}
                     disabled={!cv.trim() && !isLocked}
                   >
-                    {isLocked ? "🔒 Unlock to Analyse" : "Analyse my CV →"}
+                    {isLocked ? t.unlock : t.analyseBtn}
                   </button>
-                  <button className="btn-back" onClick={() => setStep(1)}>← Back</button>
+                  <button className="btn-back" onClick={() => setStep(1)}>{t.back}</button>
                   <button className="btn-secondary" onClick={() => { setCv(SAMPLE_CV); setError(""); }}>
-                    Use sample CV
+                    {lang === "fr" ? "Exemple CV" : lang === "nl" ? "Voorbeeld cv" : "Use sample CV"}
                   </button>
                 </div>
                 {error && (
                   <div className="error">
                     <span>{error}</span>
-                    <button className="error-retry" onClick={handleAnalyze}>Try again</button>
+                    <button className="error-retry" onClick={handleAnalyze}>{lang === "fr" ? "Réessayer" : lang === "nl" ? "Opnieuw" : "Try again"}</button>
                   </div>
                 )}
                 <div className="privacy-note">
-                  🔒 Your CV and job description are sent securely and are not stored or used for training.
+                  {t.privacyNote}
                 </div>
               </div>
             )}
@@ -810,9 +953,9 @@ ${cv}`
         {loading && (
           <div className="loading-state">
             <div className="spinner" />
-            <p className="loading-text">Analysing your CV against the role...</p>
+            <p className="loading-text">{t.analysing}</p>
             <button className="loading-cancel" onClick={() => { if (abortRef.current) abortRef.current.abort(); setLoading(false); }}>
-              Cancel
+              {t.cancel}
             </button>
           </div>
         )}
@@ -840,11 +983,11 @@ ${cv}`
               {activeTab === "score" && (
                 <div>
                   {result.strengths?.length > 0 && (<>
-                    <p className="section-heading">What's working</p>
+                    <p className="section-heading">{t.scoreStrengths}</p>
                     <div className="pill-list">{result.strengths.map((s, i) => <div key={i} className="pill"><span className="pill-icon">✓</span>{s}</div>)}</div>
                   </>)}
                   {result.gaps?.length > 0 && (<>
-                    <p className="section-heading">Gaps to address</p>
+                    <p className="section-heading">{t.scoreGaps}</p>
                     <div className="pill-list">{result.gaps.map((g, i) => <div key={i} className="pill"><span className="pill-icon">△</span>{g}</div>)}</div>
                   </>)}
                 </div>
@@ -852,7 +995,7 @@ ${cv}`
 
               {activeTab === "improve" && (
                 <div>
-                  <p className="section-heading">CV improvements</p>
+                  <p className="section-heading">{t.improvements}</p>
                   <div className="pill-list">
                     {result.cv_improvements?.map((imp, i) => (
                       <div key={i} className="pill">
@@ -868,7 +1011,7 @@ ${cv}`
                 <div>
                   <div className="letter-body">{result.cover_letter}</div>
                   <button className={`copy-btn${copied === "letter" ? " copied" : ""}`} onClick={() => copyToClipboard(result.cover_letter, "letter")}>
-                    {copied === "letter" ? "✓ Copied" : "Copy letter"}
+                    {copied === "letter" ? "✓ Copied" : t.copyLetter}
                   </button>
                 </div>
               )}
@@ -876,21 +1019,19 @@ ${cv}`
 
             {usesCount >= FREE_LIMIT && (
               <div className="upgrade-banner">
-                <p className="upgrade-banner-text">
-                  <strong>That was your last free analysis.</strong> Get full access from €15 — one-time payment.
-                </p>
-                <button className="upgrade-banner-btn" onClick={openPaywall}>Get access →</button>
+                <p className="upgrade-banner-text">{t.upgradeBanner}</p>
+                <button className="upgrade-banner-btn" onClick={openPaywall}>{t.upgradeBtn}</button>
               </div>
             )}
 
-            <button className="try-again-btn" onClick={reset}>← Analyse another role</button>
+            <button className="try-again-btn" onClick={reset}>{t.newAnalysis}</button>
           </div>
         )}
 
         <div className="footer">
-          <p>CraftCV by <a href="https://nexiotools.nl" target="_blank" rel="noopener noreferrer">nexiotools.nl</a> &mdash; Land the role you deserve</p>
+          <p>CraftCV by <a href="https://nexiotools.nl" target="_blank" rel="noopener noreferrer">nexiotools.nl</a> &mdash; {t.footerTagline}</p>
           <p style={{ fontSize: 11, color: "#bbb", marginTop: 6 }}>
-            Your content is processed securely and never stored. &nbsp;
+            {lang === "fr" ? "Votre contenu est traité de manière sécurisée et n'est jamais stocké." : lang === "nl" ? "Je inhoud wordt veilig verwerkt en nooit opgeslagen." : "Your content is processed securely and never stored."} &nbsp;
             <a href="https://nexiotools.nl/privacy.html" target="_blank" rel="noopener noreferrer" style={{ color: "#bbb" }}>Privacy Policy</a>
             &nbsp;·&nbsp;
             <a href="https://nexiotools.nl/terms.html" target="_blank" rel="noopener noreferrer" style={{ color: "#bbb" }}>Terms of Service</a>
