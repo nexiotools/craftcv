@@ -471,6 +471,9 @@ export default function App() {
       privacyNote: "🔒 Your CV and job description are sent securely and never stored.",
       footerTagline: "Land the role you deserve",
       uploadHint: "or upload a PDF",
+      accessGranted: "Access granted",
+      lifetime: "Lifetime",
+      daysLeft: (n) => `${n} days left`,
     },
     nl: {
       h1a: "Meer interviews binnenhalen.",
@@ -511,6 +514,9 @@ export default function App() {
       privacyNote: "🔒 Je cv en vacaturetekst worden veilig verwerkt en nooit opgeslagen.",
       footerTagline: "Krijg de baan die je verdient",
       uploadHint: "of upload een pdf",
+      accessGranted: "Toegang verleend",
+      lifetime: "Levenslang",
+      daysLeft: (n) => `Nog ${n} dagen`,
     },
     fr: {
       h1a: "Décrochez plus d'entretiens.",
@@ -551,6 +557,9 @@ export default function App() {
       privacyNote: "🔒 Votre CV et la description du poste sont transmis de manière sécurisée et ne sont jamais stockés.",
       footerTagline: "Décrochez le poste que vous méritez",
       uploadHint: "ou importer un PDF",
+      accessGranted: "Accès accordé",
+      lifetime: "À vie",
+      daysLeft: (n) => `${n} jours restants`,
     },
   };
   const t = T[lang];
@@ -828,7 +837,7 @@ ${cv}`
             </div>
             {isWhitelisted ? (
               <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#f0fdf4", border: "1px solid #86efac", color: "#22c55e", fontSize: 11, padding: "5px 12px", borderRadius: 20, fontFamily: "'DM Sans', sans-serif" }}>
-                ✓ {accessPlan ? accessPlan : "Access granted"}{accessPlan && accessPlan !== "Lifetime" && accessDaysLeft ? ` · ${accessDaysLeft} days left` : accessPlan === "Lifetime" ? " · Lifetime" : ""}
+                ✓ {accessPlan ? (accessPlan === "Lifetime" ? t.lifetime : accessPlan) : t.accessGranted}{accessPlan && accessPlan !== "Lifetime" && accessDaysLeft ? ` · ${t.daysLeft(accessDaysLeft)}` : accessPlan === "Lifetime" ? ` · ${t.lifetime}` : ""}
               </span>
             ) : usesCount < FREE_LIMIT ? (
               <span className={`free-badge${remainingFree === 1 ? " warn" : ""}`}>
