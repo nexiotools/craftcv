@@ -433,7 +433,7 @@ export default function App() {
     en: {
       h1a: "Land more interviews.",
       h1b: "Faster.",
-      subtitle: "Paste or upload your job description and CV. Get a match score, actionable improvements, and a tailored cover letter — in seconds.",
+      subtitle: "Paste or upload your job description and CV. Get a match score, actionable improvements, and a tailored cover letter, in seconds.",
       step1Label: "Job description",
       step2Label: "Your CV",
       stepIndicator: (s) => s === 1 ? "Job description" : "Your CV",
@@ -475,7 +475,7 @@ export default function App() {
     nl: {
       h1a: "Meer interviews binnenhalen.",
       h1b: "Sneller.",
-      subtitle: "Plak of upload de vacaturetekst en je cv. Krijg een matchscore, verbeterpunten en een op maat gemaakte motivatiebrief — in seconden.",
+      subtitle: "Plak of upload de vacaturetekst en je cv. Krijg een matchscore, verbeterpunten en een op maat gemaakte motivatiebrief, in seconden.",
       stepIndicator: (s) => s === 1 ? "Vacaturetekst" : "Jouw cv",
       cardLabelJd: "Stap 1 — Vacaturetekst",
       cardLabelCv: "Stap 2 — Jouw cv",
@@ -515,7 +515,7 @@ export default function App() {
     fr: {
       h1a: "Décrochez plus d'entretiens.",
       h1b: "Plus vite.",
-      subtitle: "Collez ou importez la description du poste et votre CV. Obtenez un score de correspondance, des améliorations concrètes et une lettre de motivation — en quelques secondes.",
+      subtitle: "Collez ou importez la description du poste et votre CV. Obtenez un score de correspondance, des améliorations concrètes et une lettre de motivation, en quelques secondes.",
       stepIndicator: (s) => s === 1 ? "Description du poste" : "Votre CV",
       cardLabelJd: "Étape 1 — Description du poste",
       cardLabelCv: "Étape 2 — Votre CV",
