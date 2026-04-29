@@ -821,7 +821,15 @@ ${cv}`
         <div className="header">
           <div className="header-row">
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <div className="logo-mark">✦ CraftCV</div>
+              <div className="logo-mark">
+                <svg width="18" height="18" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="32" height="32" rx="7" fill="#f5f3f0"/>
+                  <rect x="6" y="6" width="5" height="20" rx="1.4" fill="#0f0f0f"/>
+                  <rect x="21" y="6" width="5" height="20" rx="1.4" fill="#0f0f0f"/>
+                  <polygon points="11,6 16,6 26,26 21,26" fill="#ff4f4f"/>
+                </svg>
+                CraftCV
+              </div>
               <div style={{ display: "flex", background: "#f0ede8", border: "1px solid #e8e4de", borderRadius: 20, overflow: "hidden" }}>
                 {["nl","en","fr"].map(l => (
                   <button key={l} onClick={() => { setLang(l); try { localStorage.setItem("craftcv_lang", l); } catch {} }} style={{
