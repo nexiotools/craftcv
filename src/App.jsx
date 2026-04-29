@@ -454,6 +454,7 @@ export default function App() {
       scoreGaps: "Gaps",
       improvements: "CV Improvements",
       copyLetter: "Copy cover letter",
+      downloadWord: "Download as Word",
       newAnalysis: "← New analysis",
       freeLeft: (n) => `${n} free ${n === 1 ? "analysis" : "analyses"} left`,
       freeWarn: (n) => `⚠ ${n} free ${n === 1 ? "analysis" : "analyses"} left`,
@@ -497,6 +498,7 @@ export default function App() {
       scoreGaps: "Ontbrekende punten",
       improvements: "CV-verbeteringen",
       copyLetter: "Kopieer motivatiebrief",
+      downloadWord: "Download als Word",
       newAnalysis: "← Nieuwe analyse",
       freeLeft: (n) => `${n} gratis ${n === 1 ? "analyse" : "analyses"} over`,
       freeWarn: (n) => `⚠ ${n} gratis ${n === 1 ? "analyse" : "analyses"} over`,
@@ -540,6 +542,7 @@ export default function App() {
       scoreGaps: "Points manquants",
       improvements: "Améliorations du CV",
       copyLetter: "Copier la lettre de motivation",
+      downloadWord: "Télécharger en Word",
       newAnalysis: "← Nouvelle analyse",
       freeLeft: (n) => `${n} analyse${n > 1 ? "s" : ""} gratuite${n > 1 ? "s" : ""} restante${n > 1 ? "s" : ""}`,
       freeWarn: (n) => `⚠ ${n} analyse${n > 1 ? "s" : ""} gratuite${n > 1 ? "s" : ""} restante${n > 1 ? "s" : ""}`,
@@ -713,8 +716,18 @@ ${cv}`
     }
   };
 
-  const copyToClipboard = (text, key) => {
-    navigator.clipboard.writeText(text).catch(() => {});
+  const downloadAsWord = (text) => {
+    const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>Cover Letter</title></head><body style="font-family:Calibri,sans-serif;font-size:12pt;line-height:1.8;">${text.replace(/\n/g, "<br/>")}</body></html>`;
+    const blob = new Blob([html], { type: "application/msword" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "cover-letter.doc";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const copyToClipboard = (text, key) => {    navigator.clipboard.writeText(text).catch(() => {});
     setCopied(key);
     setTimeout(() => setCopied(""), 2000);
   };
@@ -1027,9 +1040,14 @@ ${cv}`
               {activeTab === "letter" && (
                 <div>
                   <div className="letter-body">{result.cover_letter}</div>
-                  <button className={`copy-btn${copied === "letter" ? " copied" : ""}`} onClick={() => copyToClipboard(result.cover_letter, "letter")}>
-                    {copied === "letter" ? "✓ Copied" : t.copyLetter}
-                  </button>
+                  <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 12 }}>
+                    <button className={`copy-btn${copied === "letter" ? " copied" : ""}`} onClick={() => copyToClipboard(result.cover_letter, "letter")}>
+                      {copied === "letter" ? "✓ Copied" : t.copyLetter}
+                    </button>
+                    <button className="copy-btn" onClick={() => downloadAsWord(result.cover_letter)}>
+                      ↓ {t.downloadWord}
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
