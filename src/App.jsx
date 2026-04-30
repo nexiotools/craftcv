@@ -127,7 +127,7 @@ function UploadBtn({ label, onExtract, uploading, setUploading, setError }) {
           background: "#f0ede8", border: "1px solid #e8e4de",
           color: "#666", fontSize: 11, fontWeight: 500,
           padding: "4px 10px", borderRadius: 12, cursor: uploading ? "not-allowed" : "pointer",
-          fontFamily: "'DM Sans', sans-serif", opacity: uploading ? 0.6 : 1,
+          fontFamily: "DM Sans, sans-serif", opacity: uploading ? 0.6 : 1,
           transition: "all 0.2s"
         }}
       >
@@ -237,7 +237,7 @@ function PaywallModal({ onClose, onWhitelisted }) {
         </div>
 
         <h2 style={{
-          fontFamily: "'Syne', sans-serif", fontSize: 22, fontWeight: 800,
+          fontFamily: "Syne, sans-serif", fontSize: 22, fontWeight: 800,
           color: "#0f0f0f", marginBottom: 8, lineHeight: 1.2
         }}>You've used your 2 free analyses</h2>
 
@@ -251,7 +251,7 @@ function PaywallModal({ onClose, onWhitelisted }) {
             "Tailored cover letters every time",
             "Keyword gap detection",
             "Upload PDF or paste text",
-            "One-time payment — no recurring charges",
+            "One-time payment, no recurring charges",
           ].map((f, i) => (
             <div key={i} style={{
               display: "flex", gap: 10, alignItems: "center", padding: "8px 0",
@@ -274,10 +274,10 @@ function PaywallModal({ onClose, onWhitelisted }) {
           borderRadius: 10, padding: "12px 16px", marginBottom: 8, textDecoration: "none"
         }}>
           <div>
-            <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 13, fontWeight: 700, color: "#444" }}>Starter — 3 Months</div>
+            <div style={{ fontFamily: "Syne, sans-serif", fontSize: 13, fontWeight: 700, color: "#444" }}>Starter: 3 Months</div>
             <div style={{ fontSize: 11, color: "#aaa" }}>One-time payment</div>
           </div>
-          <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 20, fontWeight: 800, color: "#444" }}>€15</div>
+          <div style={{ fontFamily: "Syne, sans-serif", fontSize: 20, fontWeight: 800, color: "#444" }}>€15</div>
         </a>
 
         {/* Pro */}
@@ -294,10 +294,10 @@ function PaywallModal({ onClose, onWhitelisted }) {
             padding: "2px 8px", borderRadius: 4, textTransform: "uppercase"
           }}>Most popular</div>
           <div>
-            <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 14, fontWeight: 800, color: "#fff" }}>Pro — 1 Year</div>
+            <div style={{ fontFamily: "Syne, sans-serif", fontSize: 14, fontWeight: 800, color: "#fff" }}>Pro: 1 Year</div>
             <div style={{ fontSize: 11, color: "#888" }}>One-time payment · €3.25/month</div>
           </div>
-          <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 22, fontWeight: 800, color: "#fff" }}>€39</div>
+          <div style={{ fontFamily: "Syne, sans-serif", fontSize: 22, fontWeight: 800, color: "#fff" }}>€39</div>
         </a>
 
         {/* Lifetime */}
@@ -307,22 +307,22 @@ function PaywallModal({ onClose, onWhitelisted }) {
           borderRadius: 10, padding: "12px 16px", marginBottom: 16, textDecoration: "none"
         }}>
           <div>
-            <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 13, fontWeight: 700, color: "#0f0f0f" }}>Lifetime Access</div>
+            <div style={{ fontFamily: "Syne, sans-serif", fontSize: 13, fontWeight: 700, color: "#0f0f0f" }}>Lifetime Access</div>
             <div style={{ fontSize: 11, color: "#aaa" }}>Pay once, use forever</div>
           </div>
-          <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 20, fontWeight: 800, color: "#0f0f0f" }}>€79</div>
+          <div style={{ fontFamily: "Syne, sans-serif", fontSize: 20, fontWeight: 800, color: "#0f0f0f" }}>€79</div>
         </a>
 
         <p style={{ textAlign: "center", color: "#bbb", fontSize: 11 }}>
           Secure checkout · Lemon Squeezy · VAT included
         </p>
 
-        {/* Already paid -- enter email */}
+        {/* Already paid: enter email */}
         <div style={{ marginTop: 16, borderTop: "1px solid #f0ede8", paddingTop: 16 }}>
           {!showEmailEntry ? (
             <button onClick={() => { setShowEmailEntry(true); setShowCodeEntry(false); }} style={{
               background: "transparent", border: "none", color: "#888",
-              fontSize: 12, cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
+              fontSize: 12, cursor: "pointer", fontFamily: "DM Sans, sans-serif",
               textDecoration: "underline", display: "block", margin: "0 auto", padding: "4px 0"
             }}>
               Already paid? Enter your email to unlock
@@ -342,7 +342,7 @@ function PaywallModal({ onClose, onWhitelisted }) {
                     flex: 1, background: "#f9f7f5",
                     border: `1px solid ${emailStatus === "error" || emailStatus === "expired" ? "#fca5a5" : emailStatus === "success" ? "#86efac" : "#e8e4de"}`,
                     borderRadius: 8, padding: "10px 14px", color: "#0f0f0f",
-                    fontFamily: "'DM Sans', sans-serif", fontSize: 13, outline: "none"
+                    fontFamily: "DM Sans, sans-serif", fontSize: 13, outline: "none"
                   }}
                 />
                 <button onClick={handleValidateEmail}
@@ -352,7 +352,7 @@ function PaywallModal({ onClose, onWhitelisted }) {
                     border: "none",
                     color: emailStatus === "success" ? "#22c55e" : "#fff",
                     borderRadius: 8, padding: "10px 16px", cursor: "pointer",
-                    fontFamily: "'Syne', sans-serif", fontSize: 13, fontWeight: 700, whiteSpace: "nowrap"
+                    fontFamily: "Syne, sans-serif", fontSize: 13, fontWeight: 700, whiteSpace: "nowrap"
                   }}>
                   {emailStatus === "checking" ? "..." : emailStatus === "success" ? "✓" : "Unlock"}
                 </button>
@@ -368,7 +368,7 @@ function PaywallModal({ onClose, onWhitelisted }) {
         {!showCodeEntry ? (
           <button onClick={() => { setShowCodeEntry(true); setShowEmailEntry(false); }} style={{
             background: "transparent", border: "none", color: "#ccc",
-            fontSize: 11, cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
+            fontSize: 11, cursor: "pointer", fontFamily: "DM Sans, sans-serif",
             textDecoration: "underline", display: "block", margin: "8px auto 0", padding: "4px 0"
           }}>
             Have an access code?
@@ -385,7 +385,7 @@ function PaywallModal({ onClose, onWhitelisted }) {
                   flex: 1, background: "#f9f7f5",
                   border: `1px solid ${codeStatus === "error" ? "#fca5a5" : codeStatus === "success" ? "#86efac" : "#e8e4de"}`,
                   borderRadius: 8, padding: "10px 14px", color: "#0f0f0f",
-                  fontFamily: "'DM Sans', sans-serif", fontSize: 13, outline: "none"
+                  fontFamily: "DM Sans, sans-serif", fontSize: 13, outline: "none"
                 }}
               />
               <button onClick={handleValidateCode}
@@ -395,7 +395,7 @@ function PaywallModal({ onClose, onWhitelisted }) {
                   border: "none",
                   color: codeStatus === "success" ? "#22c55e" : "#fff",
                   borderRadius: 8, padding: "10px 16px", cursor: "pointer",
-                  fontFamily: "'Syne', sans-serif", fontSize: 13, fontWeight: 700, whiteSpace: "nowrap"
+                  fontFamily: "Syne, sans-serif", fontSize: 13, fontWeight: 700, whiteSpace: "nowrap"
                 }}>
                 {codeStatus === "checking" ? "..." : codeStatus === "success" ? "✓" : "Apply"}
               </button>
@@ -437,8 +437,8 @@ export default function App() {
       step1Label: "Job description",
       step2Label: "Your CV",
       stepIndicator: (s) => s === 1 ? "Job description" : "Your CV",
-      cardLabelJd: "Step 1 — Job description",
-      cardLabelCv: "Step 2 — Your CV",
+      cardLabelJd: "Step 1: Job description",
+      cardLabelCv: "Step 2: Your CV",
       placeholderJd: "Paste the job description here...",
       placeholderCv: "Paste your CV here...",
       analyseBtn: "Analyse CV",
@@ -467,7 +467,7 @@ export default function App() {
       errorFallback: "Something went wrong. Please try again.",
       errorParse: "Could not parse response. Please try again.",
       errorIncomplete: "Incomplete response. Please try again.",
-      upgradeBanner: <>That was your last free analysis. <strong>Get full access from €15 — one-time payment.</strong></>,
+      upgradeBanner: <>That was your last free analysis. <strong>Get full access from €15, one-time payment.</strong></>,
       upgradeBtn: "Get access →",
       privacyNote: "🔒 Your CV and job description are sent securely and never stored.",
       footerTagline: "Land the role you deserve",
@@ -481,8 +481,8 @@ export default function App() {
       h1b: "Sneller.",
       subtitle: "Plak of upload de vacaturetekst en je cv. Krijg een matchscore, verbeterpunten en een op maat gemaakte motivatiebrief, in seconden.",
       stepIndicator: (s) => s === 1 ? "Vacaturetekst" : "Jouw cv",
-      cardLabelJd: "Stap 1 — Vacaturetekst",
-      cardLabelCv: "Stap 2 — Jouw cv",
+      cardLabelJd: "Stap 1: Vacaturetekst",
+      cardLabelCv: "Stap 2: Jouw cv",
       placeholderJd: "Plak hier de vacaturetekst...",
       placeholderCv: "Plak hier je cv...",
       analyseBtn: "Analyseer cv",
@@ -511,7 +511,7 @@ export default function App() {
       errorFallback: "Er ging iets mis. Probeer opnieuw.",
       errorParse: "Kon reactie niet verwerken. Probeer opnieuw.",
       errorIncomplete: "Onvolledige reactie. Probeer opnieuw.",
-      upgradeBanner: <>Dat was je laatste gratis analyse. <strong>Volledige toegang vanaf €15 — eenmalige betaling.</strong></>,
+      upgradeBanner: <>Dat was je laatste gratis analyse. <strong>Volledige toegang vanaf €15, eenmalige betaling.</strong></>,
       upgradeBtn: "Toegang →",
       privacyNote: "🔒 Je cv en vacaturetekst worden veilig verwerkt en nooit opgeslagen.",
       footerTagline: "Krijg de baan die je verdient",
@@ -525,8 +525,8 @@ export default function App() {
       h1b: "Plus vite.",
       subtitle: "Collez ou importez la description du poste et votre CV. Obtenez un score de correspondance, des améliorations concrètes et une lettre de motivation, en quelques secondes.",
       stepIndicator: (s) => s === 1 ? "Description du poste" : "Votre CV",
-      cardLabelJd: "Étape 1 — Description du poste",
-      cardLabelCv: "Étape 2 — Votre CV",
+      cardLabelJd: "Étape 1: Description du poste",
+      cardLabelCv: "Étape 2: Votre CV",
       placeholderJd: "Collez ici la description du poste...",
       placeholderCv: "Collez ici votre CV...",
       analyseBtn: "Analyser le CV",
@@ -555,7 +555,7 @@ export default function App() {
       errorFallback: "Une erreur est survenue. Veuillez réessayer.",
       errorParse: "Impossible de traiter la réponse. Veuillez réessayer.",
       errorIncomplete: "Réponse incomplète. Veuillez réessayer.",
-      upgradeBanner: <>C'était votre dernière analyse gratuite. <strong>Accès complet à partir de €15 — paiement unique.</strong></>,
+      upgradeBanner: <>C'était votre dernière analyse gratuite. <strong>Accès complet à partir de €15, paiement unique.</strong></>,
       upgradeBtn: "Obtenir l'accès →",
       privacyNote: "🔒 Votre CV et la description du poste sont transmis de manière sécurisée et ne sont jamais stockés.",
       footerTagline: "Décrochez le poste que vous méritez",
@@ -568,6 +568,13 @@ export default function App() {
   const t = T[lang];
 
   useEffect(() => {
+    if (!document.getElementById("craftcv-fonts")) {
+      const link = document.createElement("link");
+      link.id = "craftcv-fonts";
+      link.rel = "stylesheet";
+      link.href = "https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap";
+      document.head.appendChild(link);
+    }
     try {
       const savedLang = localStorage.getItem("craftcv_lang");
       if (savedLang && ["nl","en","fr"].includes(savedLang)) setLang(savedLang);
@@ -664,7 +671,7 @@ export default function App() {
   "match_verdict": "<one punchy sentence about overall fit>",
   "strengths": ["<2-4 specific strengths that match the JD>"],
   "gaps": ["<2-4 specific gaps or missing keywords from the JD>"],
-  "cv_improvements": ["<3-5 concrete, specific CV improvements — be direct>"],
+  "cv_improvements": ["<3-5 concrete, specific CV improvements: be direct>"],
   "cover_letter": "<a sharp, tailored cover letter (4 paragraphs). First paragraph: hook with a specific achievement. Second: align experience to JD requirements. Third: show cultural/strategic fit. Fourth: confident close. Plain text, no markdown.>"
 }
 
@@ -744,23 +751,23 @@ ${cv}`
   ];
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f5f3f0", fontFamily: "'DM Sans', sans-serif", color: "#0f0f0f" }}>
+    <div style={{ minHeight: "100vh", background: "#f5f3f0", fontFamily: "DM Sans, sans-serif", color: "#0f0f0f" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
         .container { max-width: 800px; margin: 0 auto; padding: 0 24px 80px; }
         .header { padding: 52px 0 36px; animation: fadeUp 0.5s ease both; }
         .header-row { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
-        .logo-mark { display: inline-flex; align-items: center; gap: 8px; background: #0f0f0f; color: #fff; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; padding: 6px 14px; border-radius: 6px; }
+        .logo-mark { display: inline-flex; align-items: center; gap: 8px; background: #0f0f0f; color: #fff; font-family: Syne, sans-serif; font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; padding: 6px 14px; border-radius: 6px; }
         .free-badge { font-size: 11px; font-weight: 500; color: #888; background: #fff; border: 1px solid #e8e4de; padding: 5px 12px; border-radius: 20px; font-family: 'DM Sans', sans-serif; }
         .free-badge.warn { color: #f59e0b; border-color: #fde68a; background: #fffbeb; }
         .access-btn { font-size: 11px; font-weight: 600; color: #fff; background: #0f0f0f; border: none; padding: 5px 12px; border-radius: 20px; cursor: pointer; font-family: 'DM Sans', sans-serif; }
-        h1 { font-family: 'Syne', sans-serif; font-size: clamp(30px, 5vw, 46px); font-weight: 800; line-height: 1.05; color: #0f0f0f; margin-bottom: 12px; letter-spacing: -0.03em; }
+        h1 { font-family: Syne, sans-serif; font-size: clamp(30px, 5vw, 46px); font-weight: 800; line-height: 1.05; color: #0f0f0f; margin-bottom: 12px; letter-spacing: -0.03em; }
         h1 em { font-style: normal; color: #888; }
         .subtitle { color: #888; font-size: 15px; font-weight: 300; line-height: 1.6; max-width: 460px; }
-        .step-dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; font-family: 'Syne', sans-serif; transition: all 0.2s; flex-shrink: 0; }
+        .step-dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; font-family: Syne, sans-serif; transition: all 0.2s; flex-shrink: 0; }
         .step-dot.active { background: #0f0f0f; color: #fff; }
         .step-dot.done { background: #22c55e; color: #fff; }
         .step-dot.inactive { background: #e8e4de; color: #aaa; }
@@ -772,14 +779,14 @@ ${cv}`
         textarea:focus { border-color: #0f0f0f; background: #fff; }
         textarea::placeholder { color: #bbb; }
         .btn-row { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
-        .btn-primary { flex: 1; min-width: 140px; background: #0f0f0f; color: #fff; border: none; border-radius: 10px; padding: 14px 24px; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.04em; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-primary { flex: 1; min-width: 140px; background: #0f0f0f; color: #fff; border: none; border-radius: 10px; padding: 14px 24px; font-family: Syne, sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.04em; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-primary:hover:not(:disabled) { background: #222; transform: translateY(-1px); }
         .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
         .btn-primary.locked { background: #fff; color: #0f0f0f; border: 2px solid #0f0f0f; }
         .btn-primary.locked:hover:not(:disabled) { background: #f5f3f0; transform: translateY(-1px); }
         .btn-secondary { background: transparent; border: 1px solid #e8e4de; color: #888; border-radius: 10px; padding: 14px 18px; font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
         .btn-secondary:hover { border-color: #0f0f0f; color: #0f0f0f; }
-        .btn-next { background: #0f0f0f; color: #fff; border: none; border-radius: 10px; padding: 14px 24px; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.04em; cursor: pointer; transition: all 0.2s; }
+        .btn-next { background: #0f0f0f; color: #fff; border: none; border-radius: 10px; padding: 14px 24px; font-family: Syne, sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.04em; cursor: pointer; transition: all 0.2s; }
         .btn-next:hover { background: #222; transform: translateY(-1px); }
         .btn-back { background: transparent; border: 1px solid #e8e4de; color: #888; border-radius: 10px; padding: 14px 18px; font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.2s; }
         .btn-back:hover { border-color: #aaa; color: #444; }
@@ -792,7 +799,7 @@ ${cv}`
         .result-section { animation: fadeUp 0.5s ease both; }
         .score-block { display: flex; align-items: center; gap: 24px; padding: 24px; background: #f9f7f5; border-radius: 12px; margin-bottom: 24px; flex-wrap: wrap; }
         .score-ring { width: 80px; height: 80px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 3px solid; flex-shrink: 0; }
-        .score-number { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; line-height: 1; }
+        .score-number { font-family: Syne, sans-serif; font-size: 24px; font-weight: 800; line-height: 1; }
         .score-pct { font-size: 10px; color: #aaa; }
         .score-verdict { font-size: 15px; font-weight: 500; color: #0f0f0f; line-height: 1.5; }
         .score-label { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
@@ -812,7 +819,7 @@ ${cv}`
         .upgrade-banner { margin-top: 20px; background: #0f0f0f; border-radius: 12px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
         .upgrade-banner-text { color: #888; font-size: 13px; font-weight: 300; }
         .upgrade-banner-text strong { color: #fff; font-weight: 600; }
-        .upgrade-banner-btn { background: #fff; color: #0f0f0f; border: none; border-radius: 8px; padding: 9px 18px; font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; cursor: pointer; white-space: nowrap; }
+        .upgrade-banner-btn { background: #fff; color: #0f0f0f; border: none; border-radius: 8px; padding: 9px 18px; font-family: Syne, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; cursor: pointer; white-space: nowrap; }
         .upgrade-banner-btn:hover { background: #f0ede8; }
         .try-again-btn { display: flex; align-items: center; gap: 6px; background: transparent; border: 1px solid #e8e4de; color: #aaa; border-radius: 8px; padding: 10px 16px; font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.2s; margin-top: 20px; }
         .try-again-btn:hover { color: #444; border-color: #aaa; }
@@ -849,7 +856,7 @@ ${cv}`
                     background: lang === l ? "#0f0f0f" : "transparent",
                     border: "none", color: lang === l ? "#fff" : "#aaa",
                     fontSize: 11, fontWeight: lang === l ? 700 : 400,
-                    padding: "4px 10px", cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
+                    padding: "4px 10px", cursor: "pointer", fontFamily: "DM Sans, sans-serif",
                     borderRight: l !== "fr" ? "1px solid #e8e4de" : "none",
                     transition: "all 0.15s"
                   }}>{l.toUpperCase()}</button>
@@ -857,7 +864,7 @@ ${cv}`
               </div>
             </div>
             {isWhitelisted ? (
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#f0fdf4", border: "1px solid #86efac", color: "#22c55e", fontSize: 11, padding: "5px 12px", borderRadius: 20, fontFamily: "'DM Sans', sans-serif" }}>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#f0fdf4", border: "1px solid #86efac", color: "#22c55e", fontSize: 11, padding: "5px 12px", borderRadius: 20, fontFamily: "DM Sans, sans-serif" }}>
                 ✓ {accessPlan ? (accessPlan === "Lifetime" ? t.lifetime : accessPlan) : t.accessGranted}{accessPlan && accessPlan !== "Lifetime" && accessDaysLeft ? ` · ${t.daysLeft(accessDaysLeft)}` : accessPlan === "Lifetime" ? ` · ${t.lifetime}` : ""}
               </span>
             ) : usesCount < FREE_LIMIT ? (
@@ -1029,7 +1036,7 @@ ${cv}`
                   <div className="pill-list">
                     {result.cv_improvements?.map((imp, i) => (
                       <div key={i} className="pill">
-                        <span className="pill-icon" style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, color: "#0f0f0f", fontSize: 12 }}>{i + 1}</span>
+                        <span className="pill-icon" style={{ fontFamily: "Syne, sans-serif", fontWeight: 800, color: "#0f0f0f", fontSize: 12 }}>{i + 1}</span>
                         {imp}
                       </div>
                     ))}
